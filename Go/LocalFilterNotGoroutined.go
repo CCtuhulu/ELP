@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+
 func convolve(image [][]float64, kernel [][]float64) [][]float64 {
 	height := len(image)
 	width := len(image[0])
@@ -54,19 +55,20 @@ func convolve(image [][]float64, kernel [][]float64) [][]float64 {
 }
 
 func main() {
+
+	//Get the name of the image from the user
+	filename := os.Args[1]
+	
 	// Load an image
-	img, err := loadImage("manypixels.jpg")
+	img, err := loadImage("Images Folder/"+filename+".jpg")
 	if err != nil {
 		fmt.Println("Error loading image:", err)
 		return
 	}
 
+
 	startTime := time.Now()
 
-	// Convert the image to grayscale if it's a color image
-	if isColorImage(img) {
-		img = convertToGrayscale(img)
-	}
 
 	// Convert the grayscale image to a 2D float64 array
 	imageData := imageToFloat64Array(img)
@@ -123,13 +125,9 @@ func main() {
 	// Convert the 2D float64 array back to a grayscale image
 	edgeImg := float64ArrayToImage(edges)
 
-	// Save or display the original and edge-detected images
-	if err := saveImage("original_image.jpg", img); err != nil {
-		fmt.Println("Error saving original image:", err)
-		return
-	}
 
-	if err := saveImage("edge_detected_image.jpg", edgeImg); err != nil {
+
+	if err := saveImage("Edge Filtered Images/"+filename+"_edge_detected.jpg", edgeImg); err != nil {
 		fmt.Println("Error saving edge-detected image:", err)
 		return
 	}

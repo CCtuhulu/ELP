@@ -89,6 +89,20 @@ function lettresDisponiblesDansMain(lettresAAjouter, main) {
     return true; 
 }
 
+// Fonction pour détecter si un mot aurait pu être formé avec les lettres du tapis de l'adversaire
+function detecterJarnac(motPotentiel, tapisAdversaire) {
+    // Ajouter ici la logique pour vérifier si le mot aurait pu être formé avec les lettres du tapis
+    // Vous devez vous assurer que les lettres du mot potentiel sont disponibles dans le tapis de l'adversaire
+    return true; 
+}
+
+// Fonction pour vérifier si toutes les lignes du plateau sont remplies
+function toutesLesLignesRemplies(plateau) {
+    // Ajouter ici la logique pour vérifier si toutes les lignes sont remplies
+    // Vous devez vous assurer que chaque ligne contient des mots (ou d'autres critères spécifiques)
+    return true; 
+}
+
 // Fonction pour le tour du joueur
 const readline = require('readline');
 

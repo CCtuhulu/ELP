@@ -3,15 +3,47 @@
 // Fonction pour initialiser le jeu
 function initializeGame() {
     console.log("Bienvenue dans Jarnac Game");
-
-    // Tirer au sort le premier joueur à jouer (1 ou 2)
-    const premierJoueur = Math.floor(Math.random() * 2) + 1;
-
-    console.log(`Le joueur ${premierJoueur} jouera en premier.`);
 }
 
 // Appel de la fonction pour initialiser le jeu
 initializeGame();
+
+function jeuPrincipal() {
+    let game_log = "";
+    let joueur1 = player.create_player(1);
+    let joueur2 = player.create_player(2);
+    let partie = [joueur1, joueur2];
+    let tour = 0;
+    while (fin.is_still_going(player1.carpet, player2.carpet, listOfLetters)) {
+		activePlayer = partie[tour % 2] ;
+		jump_line(9);
+		console.log("joueur " + ((tour % 2) + 1) + ", c'est votre tour :");
+		jarnac(activePlayer, tour, partie[(tour + 1) % 2]);
+		activePlayer.disp_carpet();
+		jump_line(1);
+		activePlayer.disp_letters();
+		//jump_line(2);
+		drawTurn(tour, activePlayer);
+		jump_line(3);
+		activePlayer.disp_letters();
+		jump_line(1);
+		actionOfPlayer(activePlayer, 0);
+		tour = tour + 1;
+	}
+	console.log("Fin de partie au bout de " + Math.round(tour/2) + " tours.");
+	console.log(fin.winner(player1.carpet, player2.carpet));
+	console.log("Scores :")
+	console.log("Joueur 1 : " + fin.score(player1.carpet))
+	console.log("Joueur 2 : " + fin.score(player2.carpet))
+
+	return game_log
+
+}
+
+module.exports = {
+    jeuPrincipal,
+};
+
 
 const lettresDisponibles = [
     { lettre: 'A', quantite: 14 },
@@ -42,37 +74,7 @@ const lettresDisponibles = [
     { lettre: 'Z', quantite: 2 }
 ];
 
-// Fonction pour piocher des lettres au hasard pour un joueur
-function piocherLettresJoueur() {
-    const lettresPiochees = [];
 
-    // Piocher 6 lettres au hasard
-    for (let i = 0; i < 6; i++) {
-        const lettreIndex = Math.floor(Math.random() * lettresDisponibles.length);
-        const lettre = lettresDisponibles[lettreIndex].lettre;
-        
-        // Retirer la lettre du pool des lettres disponibles
-        lettresDisponibles[lettreIndex].quantite--;
-        if (lettresDisponibles[lettreIndex].quantite === 0) {
-            lettresDisponibles.splice(lettreIndex, 1);
-        }
-
-        lettresPiochees.push(lettre);
-    }
-
-    return lettresPiochees;
-}
-
-// Fonction pour chaque joueur pioche 6 lettres
-function initialiserMainsJoueurs() {
-    const mainJoueur1 = piocherLettresJoueur();
-    const mainJoueur2 = piocherLettresJoueur();
-
-    return {
-        joueur1: mainJoueur1,
-        joueur2: mainJoueur2
-    };
-}
 
 // Fonction pour valider si un mot est un nom commun 
 function estNomCommun(mot) {
@@ -103,6 +105,42 @@ function toutesLesLignesRemplies(plateau) {
     return true; 
 }
 
+
+
+// Fonction pour piocher des lettres au hasard pour un joueur
+function piocherLettresJoueur() {
+    const lettresPiochees = [];
+
+    // Piocher 6 lettres au hasard
+    for (let i = 0; i < 6; i++) {
+        const lettreIndex = Math.floor(Math.random() * lettresDisponibles.length);
+        const lettre = lettresDisponibles[lettreIndex].lettre;
+        
+        // Retirer la lettre du pool des lettres disponibles
+        lettresDisponibles[lettreIndex].quantite--;
+        if (lettresDisponibles[lettreIndex].quantite === 0) {
+            lettresDisponibles.splice(lettreIndex, 1);
+        }
+
+        lettresPiochees.push(lettre);
+    }
+
+    return lettresPiochees;
+}
+
+// Fonction pour chaque joueur pioche 6 lettres
+function initialiserMainsJoueurs() {
+    const mainJoueur1 = piocherLettresJoueur();
+    const mainJoueur2= piocherLettresJoueur();
+
+    return {
+        joueur1: mainJoueur1,
+        joueur2: mainJoueur2,
+    };
+}
+
+
+
 // Fonction pour le tour du joueur
 const readline = require('readline');
 
@@ -123,70 +161,78 @@ async function obtenirDecision() {
 
 
 async function tourDuJoueur(joueur, main) {
-const decision = await obtenirDecision();
-console.log(`Vous avez choisi de : ${decision}`);
-
-// Vérifier la décision du joueur
-if (decision === "jouer") {
-    console.log("Bonne chance !");
-
-    // Demander au joueur de saisir un mot
-    motJoue = await obtenirDecision();
-
-    // Valider le mot
-    if (motJoue.length >= 3 && estNomCommun(motJoue)) {
-        console.log(`Vous avez joué le mot : ${motJoue}`);
-        // Ajoutez ici le code pour traiter le mot joué
-    } else {
-        console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
-    }
-
-
-
-
-} else if (decision === "transformer un mot") {
-    console.log("Vous avez choisi de transformer un mot.");
-
-    // Demander au joueur de saisir le mot à transformer
-    const motATransformer = await obtenirDecision();
-
+    const decision = await obtenirDecision();
+    console.log(`Vous avez choisi de : ${decision}`);
     
-// Valider que le mot à transformer est affiché
-if (motAffiche.includes(motATransformer)) {
-    // Demander au joueur de saisir les lettres à ajouter
-    const lettresAAjouter = await obtenirDecision("Saisissez les lettres que vous voulez ajouter :");
-
-    // Valider que les lettres à ajouter sont disponibles dans la main du joueur
-    if (lettresDisponiblesDansMain(lettresAAjouter, main)) {
-        console.log(`Vous avez choisi de transformer le mot : ${motATransformer} en ajoutant les lettres : ${lettresAAjouter}`);
-
-        // Demander au joueur de saisir le nouveau mot
-        const nouveauMot = await obtenirDecision("Saisissez le nouveau mot que vous voulez afficher :");
-
-        // Valider le nouveau mot
-        if (nouveauMot.length >= 3 && estNomCommun(nouveauMot)) {
-            console.log(`Vous avez choisi d'afficher le nouveau mot : ${nouveauMot}`);
-            // Ajoutez ici le code pour traiter l'affichage du nouveau mot
+    // Vérifier la décision du joueur
+    if (decision === "jouer") {
+        console.log("Bonne chance !");
+    
+        // Demander au joueur de saisir un mot
+        console.log("Veuillez saisir un nouveau mot:");
+        motJoue = await obtenirDecision();
+    
+        // Valider le mot
+        if (motJoue.length >= 3 && estNomCommun(motJoue)) {
+            console.log(`Vous avez joué le mot : ${motJoue}`);
+            
         } else {
             console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
         }
-    } else {
-        console.log("Lettres invalides. Veuillez choisir des lettres disponibles dans votre main.");
+    
+    
+    
+    
+    } else if (decision === "transformer un mot") {
+        console.log("Vous avez choisi de transformer un mot.");
+    
+        // Demander au joueur de saisir le mot à transformer
+        console.log("quel mot voulez vous transformer?");
+        const motATransformer = await obtenirDecision();
+    
+        
+    // Valider que le mot à transformer est affiché
+    if (motAffiche.includes(motATransformer)) {
+        // Demander au joueur de saisir les lettres à ajouter
+        console.log("Saisissez les lettres que vous voulez ajouter :");
+        const lettresAAjouter = await obtenirDecision();
+    
+        // Valider que les lettres à ajouter sont disponibles dans la main du joueur
+        if (lettresDisponiblesDansMain(lettresAAjouter, main)) {
+            console.log(`Vous avez choisi de transformer le mot : ${motATransformer} en ajoutant les lettres : ${lettresAAjouter}`);
+    
+            // Demander au joueur de saisir le nouveau mot
+            console.log("Saisissez le nouveau mot que vous voulez afficher :");
+            const nouveauMot = await obtenirDecision();
+    
+            // Valider le nouveau mot
+            if (nouveauMot.length >= 3 && estNomCommun(nouveauMot)) {
+                console.log(`Vous avez choisi d'afficher le nouveau mot : ${nouveauMot}`);
+                // Ajoutez ici le code pour traiter l'affichage du nouveau mot
+            } else {
+                console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
+            }
+        } else {
+            console.log("Lettres invalides. Veuillez choisir des lettres disponibles dans votre main.");
+        }
     }
-}
-
+    
 
 } else if (decision === "passer") {
     console.log("Vous avez choisi de passer votre tour.");
-    // Ajoutez ici le code pour le cas où le joueur choisit de passer son tour
+   
+
 } else {
     console.log("Décision invalide. Veuillez choisir parmi jouer, transformer un mot ou passer.");
     // Ajoutez ici le code pour gérer une décision invalide
 }
+  
 }
 
-    // Appel de la fonction pour le tour du joueur
+// Appel de la fonction pour le tour du joueur
 tourDuJoueur();
+
+
 
 // Fonction pour jouer un tour
 function jouerTour(joueur, main) {
@@ -217,9 +263,6 @@ jouerTour(1, mainsJoueurs.joueur1);
 
 // Tour du joueur 2
 jouerTour(2, mainsJoueurs.joueur2);
-
-    
-
 
 
 

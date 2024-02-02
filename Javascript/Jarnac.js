@@ -15,18 +15,12 @@ function jeuPrincipal() {
     let joueur2 = player.create_player(2);
     let partie = [joueur1, joueur2];
     let tour = 0;
-    while (fin.is_still_going(player1.carpet, player2.carpet,disp_letters )) {
+    while (fin.is_still_going(player1.carpet, player2.carpet,lettresDisponibles )) {
 		activePlayer = partie[tour % 2] ;
 		jump_line(9);
 		console.log("joueur " + ((tour % 2) + 1) + ", c'est votre tour :");
 		jarnac(activePlayer, tour, partie[(tour + 1) % 2]);
 		activePlayer.disp_carpet();
-		jump_line(1);
-		activePlayer.disp_letters();
-		//jump_line(2);
-		drawTurn(tour, activePlayer);
-		jump_line(3);
-		activePlayer.disp_letters();
 		jump_line(1);
 		actionOfPlayer(activePlayer, 0);
 		tour = tour + 1;
@@ -107,35 +101,38 @@ jouerTour(1, mainsJoueurs.joueur1);
 // Tour du joueur 2
 jouerTour(2, mainsJoueurs.joueur2);
 
-
-
-// Fonction pour valider si un mot est un nom commun 
-function estNomCommun(mot) {
-    // Ajouter ici la logique pour vérifier si le mot est un nom commun
-    // Par exemple, vous pouvez utiliser une liste de noms communs pour la vérification
-    return true; 
+//fonction pour vérifier si un mot est correct
+function mot_correct(mot) {
+    // Vérifier si la longueur du mot est entre 3 et 9 inclus
+    if (mot.length >= 3 && mot.length <= 9) {
+        return true;
+    } else {
+        return false;
+    }
 }
-
 
 // Fonction pour vérifier si les lettres à ajouter sont disponibles dans la main du joueur
 function lettresDisponiblesDansMain(lettresAAjouter, main) {
-    // Ajouter ici la logique pour vérifier si les lettres sont disponibles dans la main du joueur
-    // Devoir s'assurer que les lettres à ajouter sont dans la main du joueur
-    return true; 
-}
+    // Copier la main du joueur pour éviter les modifications directes
+    const mainCopie = [...main];
 
-// Fonction pour détecter si un mot aurait pu être formé avec les lettres du tapis de l'adversaire
-function detecterJarnac(motPotentiel, tapisAdversaire) {
-    // Ajouter ici la logique pour vérifier si le mot aurait pu être formé avec les lettres du tapis
-    // Vous devez vous assurer que les lettres du mot potentiel sont disponibles dans le tapis de l'adversaire
-    return true; 
-}
+    // Vérifier chaque lettre à ajouter
+    for (const lettre of lettresAAjouter) {
+        // Vérifier si la lettre est dans la main du joueur
+        const indexLettre = mainCopie.indexOf(lettre);
 
-// Fonction pour vérifier si toutes les lignes du plateau sont remplies
-function toutesLesLignesRemplies(plateau) {
-    // Ajouter ici la logique pour vérifier si toutes les lignes sont remplies
-    // Vous devez vous assurer que chaque ligne contient des mots (ou d'autres critères spécifiques)
-    return true; 
+        // Si la lettre n'est pas trouvée, retourner false
+        if (indexLettre === -1) {
+            console.log(`Lettre "${lettre}" non disponible dans la main du joueur.`);
+            return false;
+        }
+
+        // Retirer la lettre de la mainCopie
+        mainCopie.splice(indexLettre, 1);
+    }
+
+    // Si toutes les lettres sont disponibles, retourner true
+    return true;
 }
 
 
@@ -173,76 +170,94 @@ function initialiserMainsJoueurs() {
 }
 
 
-// Fonction pour gérer le tour du joueur
 function tourDuJoueur() {
-    
-    // Demander au joueur de prendre une décision
-    let decision = prompt("Que voulez-vous faire ? (jouer, ne pas jouer, passer)");
+    let decision;
 
-    // Vérifier la décision du joueur
-    if (decision === "jouer") {
-        console.log("Bonne chance !");
-    
-        // Demander au joueur de saisir un mot
-        console.log("Veuillez saisir un nouveau mot:");
-        let proposition = prompt("Entrez votre proposition :");
-    
-        // Valider le mot
-        if (proposition.length >= 3 && estNomCommun(proposition)) {
-            console.log(`Vous avez joué le mot : ${proposition}`);
-            
-        } else {
-            console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
-        }
-    
-    
-    
-    
-    } else if (decision === "transformer un mot") {
-        console.log("Vous avez choisi de transformer un mot.");
-    
-        // Demander au joueur de saisir le mot à transformer
-        console.log("quel mot voulez vous transformer?");
-        let transformation = prompt("Entrez votre proposition :");
-    
-        
-    // Valider que le mot à transformer est affiché
-    if (motAffiche.includes(transformation)) {
-        // Demander au joueur de saisir les lettres à ajouter
-        console.log("Saisissez les lettres que vous voulez ajouter :");
-        let lettresAAjouter = prompt("les lettres a ajouter sont:");
-    
-        // Valider que les lettres à ajouter sont disponibles dans la main du joueur
-        if (lettresDisponiblesDansMain(lettresAAjouter, main)) {
-            console.log(`Vous avez choisi de transformer le mot : ${transformation} en ajoutant les lettres : ${lettresAAjouter}`);
-    
-            // Demander au joueur de saisir le nouveau mot
-            console.log("Saisissez le nouveau mot que vous voulez afficher :");
-            let nouveauMot = prompt("quel nouveau mot voulez vous former?");
-    
-            // Valider le nouveau mot
-            if (nouveauMot.length >= 3 && estNomCommun(nouveauMot)) {
-                console.log(`Vous avez choisi d'afficher le nouveau mot : ${nouveauMot}`);
-                // Ajoutez ici le code pour traiter l'affichage du nouveau mot
+    // Utiliser une boucle while pour répéter le processus jusqu'à ce que la décision soit valide
+    while (true) {
+        // Demander au joueur de prendre une décision
+        decision = prompt("Que voulez-vous faire ? (jouer, transformer un mot, passer)");
+
+        // Vérifier la décision du joueur
+        if (decision === "jouer") {
+            console.log("Bonne chance !");
+
+            // Demander au joueur de saisir un mot
+            console.log("Veuillez saisir un nouveau mot:");
+            let proposition = prompt("Entrez votre proposition :");
+
+            // Valider le mot
+            if (proposition.length >= 3 && mot_correct(proposition)) {
+                console.log(`Vous avez joué le mot : ${proposition}`);
+                break; // Sortir de la boucle si la décision est valide
             } else {
                 console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
             }
+        } else if (decision === "transformer un mot") {
+            console.log("Vous avez choisi de transformer un mot.");
+
+            // Demander au joueur de saisir le mot à transformer
+            console.log("Quel mot voulez-vous transformer?");
+            let transformation = prompt("Entrez votre proposition :");
+
+            // Valider que le mot à transformer est affiché
+            if (motAffiche.includes(transformation)) {
+                // Demander au joueur de saisir les lettres à ajouter
+                console.log("Saisissez les lettres que vous voulez ajouter :");
+                let lettresAAjouter = prompt("Les lettres à ajouter sont:");
+
+                // Valider que les lettres à ajouter sont disponibles dans la main du joueur
+                if (lettresDisponiblesDansMain(lettresAAjouter, main)) {
+                    console.log(`Vous avez choisi de transformer le mot : ${transformation} en ajoutant les lettres : ${lettresAAjouter}`);
+
+                    // Demander au joueur de saisir le nouveau mot
+                    console.log("Saisissez le nouveau mot que vous voulez afficher :");
+                    let nouveauMot = prompt("Quel nouveau mot voulez-vous former?");
+
+                    // Valider le nouveau mot
+                    if (nouveauMot.length >= 3 && mot_correct(nouveauMot)) {
+                        console.log(`Vous avez choisi d'afficher le nouveau mot : ${nouveauMot}`);
+                        // Ajoutez ici le code pour traiter l'affichage du nouveau mot
+                        break; // Sortir de la boucle si la décision est valide
+                    } else {
+                        console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
+                    }
+                } else {
+                    console.log("Lettres invalides. Veuillez choisir des lettres disponibles dans votre main.");
+                }
+            }
+        } else if (decision === "passer") {
+            console.log("Vous avez choisi de passer votre tour.");
+            break; // Sortir de la boucle si la décision est valide
         } else {
-            console.log("Lettres invalides. Veuillez choisir des lettres disponibles dans votre main.");
+            console.log("Décision invalide. Veuillez choisir parmi jouer, transformer un mot ou passer.");
+            // Ajoutez ici le code pour gérer une décision invalide
         }
     }
-    
-
-} else if (decision === "passer") {
-    console.log("Vous avez choisi de passer votre tour.");
-   
-
-} else {
-    console.log("Décision invalide. Veuillez choisir parmi jouer, transformer un mot ou passer.");
-    // Ajoutez ici le code pour gérer une décision invalide
-}
-  
 }
 
-// Appel de la fonction pour le tour du joueur
+// Appeler la fonction pour le tour du joueur
 tourDuJoueur();
+
+
+// Fonction pour détecter si un mot aurait pu être formé avec les lettres du tapis de l'adversaire
+function detecterJarnac(motPotentiel, carpetAdversaire) {
+    // Vérifier si les lettres du mot potentiel sont disponibles dans le tapis de l'adversaire
+    if (lettresDisponiblesDansMain(motPotentiel, carpetAdversaire)) {
+        // Ajouter ici la logique pour traiter Jarnac
+        console.log('Jarnac détecté ! Le mot "${motPotentiel}"  aurait pu être formé:');
+
+        // Ajouter le mot au tapis de l'adversaire
+        carpetAdversaire.push(...motPotentiel);
+
+        // Piocher 6 lettres supplémentaires
+        const lettresPiochees = lettresDisponibles(6);
+        carpetAdversaire.push(...lettresPiochees);
+
+        return true;
+    } 
+}
+// Appeler la fonction pour détecter Jarnac
+detecterJarnac(motPotentiel, carpetAdversaire);
+
+

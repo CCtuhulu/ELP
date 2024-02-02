@@ -17,30 +17,8 @@ function create_player(pid) {
             }
             console.log(res);
         },
-        disp_letters: function () {
-            let res = "Voici vos lettres à disposition : ";
-            for (let letter of this.letters) {
-                res += letter + " ";
-            }
-            console.log(res);
-        },
-        enter_word: function () {
-            const rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            });
-
-            return new Promise(resolve => {
-                rl.question("Entrez votre mot : ", (word) => {
-                    rl.close();
-                    resolve(word.toUpperCase());
-                });
-            });
-        }
-    };
-
-    return player;
+        
+    }
 }
 
 module.exports = { create_player };
-

@@ -1,4 +1,5 @@
 // jarnac.js
+const prompt =require("prompt-sync")();
 
 // Fonction pour initialiser le jeu
 function initializeGame() {
@@ -14,7 +15,7 @@ function jeuPrincipal() {
     let joueur2 = player.create_player(2);
     let partie = [joueur1, joueur2];
     let tour = 0;
-    while (fin.is_still_going(player1.carpet, player2.carpet, listOfLetters)) {
+    while (fin.is_still_going(player1.carpet, player2.carpet,disp_letters )) {
 		activePlayer = partie[tour % 2] ;
 		jump_line(9);
 		console.log("joueur " + ((tour % 2) + 1) + ", c'est votre tour :");
@@ -45,6 +46,7 @@ module.exports = {
 };
 
 
+
 const lettresDisponibles = [
     { lettre: 'A', quantite: 14 },
     { lettre: 'B', quantite: 4 },
@@ -73,6 +75,37 @@ const lettresDisponibles = [
     { lettre: 'Y', quantite: 1 },
     { lettre: 'Z', quantite: 2 }
 ];
+
+
+// Fonction pour jouer un tour
+function jouerTour(joueur, main) {
+    console.log(`Tour du joueur ${joueur}`);
+    console.log(`Main du joueur ${joueur}: ${main}`);
+
+    // Appeler la fonction pour le tour du joueur
+    tourDuJoueur(joueur, main);
+
+    // Le joueur pioche une lettre à chaque tour
+    if (lettresDisponibles.length > 0) {
+    const nouvelleLettre = piocherLettresJoueur()[0];
+    main.push(nouvelleLettre);
+
+    console.log(`Le joueur ${joueur} a pioché la lettre "${nouvelleLettre}". Nouvelle main: ${main}`);
+}
+
+else {
+    console.log("Il n'y a plus de lettres disponibles. Fin du jeu !");
+}
+}
+
+// Initialiser les mains des joueurs
+const mainsJoueurs = initialiserMainsJoueurs();
+
+// Début du jeu (tour du joueur 1)
+jouerTour(1, mainsJoueurs.joueur1);
+
+// Tour du joueur 2
+jouerTour(2, mainsJoueurs.joueur2);
 
 
 
@@ -140,41 +173,23 @@ function initialiserMainsJoueurs() {
 }
 
 
-
-// Fonction pour le tour du joueur
-const readline = require('readline');
-
-// Fonction asynchrone pour obtenir la décision du joueur
-async function obtenirDecision() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
-    return new Promise((resolve) => {
-        rl.question("Que voulez-vous faire ? (jouer, transformer un mot, passer) ", (decision) => {
-            resolve(decision);
-            rl.close();
-        });
-    });
-}
-
-
-async function tourDuJoueur(joueur, main) {
-    const decision = await obtenirDecision();
-    console.log(`Vous avez choisi de : ${decision}`);
+// Fonction pour gérer le tour du joueur
+function tourDuJoueur() {
     
+    // Demander au joueur de prendre une décision
+    let decision = prompt("Que voulez-vous faire ? (jouer, ne pas jouer, passer)");
+
     // Vérifier la décision du joueur
     if (decision === "jouer") {
         console.log("Bonne chance !");
     
         // Demander au joueur de saisir un mot
         console.log("Veuillez saisir un nouveau mot:");
-        motJoue = await obtenirDecision();
+        let proposition = prompt("Entrez votre proposition :");
     
         // Valider le mot
-        if (motJoue.length >= 3 && estNomCommun(motJoue)) {
-            console.log(`Vous avez joué le mot : ${motJoue}`);
+        if (proposition.length >= 3 && estNomCommun(proposition)) {
+            console.log(`Vous avez joué le mot : ${proposition}`);
             
         } else {
             console.log("Mot invalide. Veuillez choisir un mot d'au moins trois lettres qui est un nom commun.");
@@ -188,22 +203,22 @@ async function tourDuJoueur(joueur, main) {
     
         // Demander au joueur de saisir le mot à transformer
         console.log("quel mot voulez vous transformer?");
-        const motATransformer = await obtenirDecision();
+        let transformation = prompt("Entrez votre proposition :");
     
         
     // Valider que le mot à transformer est affiché
-    if (motAffiche.includes(motATransformer)) {
+    if (motAffiche.includes(transformation)) {
         // Demander au joueur de saisir les lettres à ajouter
         console.log("Saisissez les lettres que vous voulez ajouter :");
-        const lettresAAjouter = await obtenirDecision();
+        let lettresAAjouter = prompt("les lettres a ajouter sont:");
     
         // Valider que les lettres à ajouter sont disponibles dans la main du joueur
         if (lettresDisponiblesDansMain(lettresAAjouter, main)) {
-            console.log(`Vous avez choisi de transformer le mot : ${motATransformer} en ajoutant les lettres : ${lettresAAjouter}`);
+            console.log(`Vous avez choisi de transformer le mot : ${transformation} en ajoutant les lettres : ${lettresAAjouter}`);
     
             // Demander au joueur de saisir le nouveau mot
             console.log("Saisissez le nouveau mot que vous voulez afficher :");
-            const nouveauMot = await obtenirDecision();
+            let nouveauMot = prompt("quel nouveau mot voulez vous former?");
     
             // Valider le nouveau mot
             if (nouveauMot.length >= 3 && estNomCommun(nouveauMot)) {
@@ -231,38 +246,3 @@ async function tourDuJoueur(joueur, main) {
 
 // Appel de la fonction pour le tour du joueur
 tourDuJoueur();
-
-
-
-// Fonction pour jouer un tour
-function jouerTour(joueur, main) {
-    console.log(`Tour du joueur ${joueur}`);
-    console.log(`Main du joueur ${joueur}: ${main}`);
-
-    // Appeler la fonction pour le tour du joueur
-    tourDuJoueur(joueur, main);
-
-    // Le joueur pioche une lettre à chaque tour
-    if (lettresDisponibles.length > 0) {
-    const nouvelleLettre = piocherLettresJoueur()[0];
-    main.push(nouvelleLettre);
-
-    console.log(`Le joueur ${joueur} a pioché la lettre "${nouvelleLettre}". Nouvelle main: ${main}`);
-}
-
-else {
-    console.log("Il n'y a plus de lettres disponibles. Fin du jeu !");
-}
-}
-
-// Initialiser les mains des joueurs
-const mainsJoueurs = initialiserMainsJoueurs();
-
-// Début du jeu (tour du joueur 1)
-jouerTour(1, mainsJoueurs.joueur1);
-
-// Tour du joueur 2
-jouerTour(2, mainsJoueurs.joueur2);
-
-
-

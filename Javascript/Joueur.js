@@ -19,6 +19,7 @@ function create_player(pid) {
         },
         
     }
+    return player;
 }
 
 module.exports = { create_player };

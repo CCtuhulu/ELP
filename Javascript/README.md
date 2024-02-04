@@ -6,28 +6,25 @@ L'objectif de ce projet est de réaliser le jeu Jarnac en mode texte avec Javasc
 
 Quelques fonctionnalités sont proposées a savoir:
 
--la détection de Jarnac par le joueur adverse 
+-la possibilité de Jarnac et d'échanger 3 lettres 
 
--La possibilité d'échanger 3 lettres au lieu d'en piocher une 
+-la possibilité de jouer et transformé les mots
 
--Transformer un mot déja posé afin de maximiser ses points
+-la détection de la plupart des bugs et cas limites
+
+-l'écriture de l'historique du jeu dans "log.txt"
 
 ## Configuration
 ### Etape 1: Installation de nodeJS et des packages
-1.Suivez ce lien pour installer nodeJS: https://nodejs.org/en/download 
+1.Suivez ce lien pour installer nodeJS: https://nodejs.org/en/download
 
-2.Installez ces packages avec ces commandes `
-
-                                         npm i prompt-sync
-
-                                         npm i --save-dev @types/prompt-sync
-
-                                         npm i --save-dev @types/node`
-                                         
+2.Installez ces packages avec ces commandes:
+`npm install readline-sync`
+`npm install fs`
+                                 
 ### Etape 2: Clonage et compilation du projet
-
-1.Clonez le projet en utilisant git clone https://github.com/CCtuhulu/ELP
+1.Clonez le projet en utilisant `git clone https://github.com/CCtuhulu/ELP`
 
 2.Mettez vous dans le dossier Elm avec: `cd /Javascript`
 
-3.Executez le projet avec la commande `node interface.js`
+3.Executez le projet avec la commande `node interface.js`      

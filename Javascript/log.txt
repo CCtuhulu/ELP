@@ -1,0 +1,16 @@
+=======Tour du joueur 1=======
+Il a pose le mot sdg
+Il a pose le mot spi
+Il a transforme le mot: sdg de la ligne n°1 en sdgs
+Il a passe son tour
+=======Tour du joueur 2=======
+Il a jarnac le mot: spi de la ligne n°2 en spix
+Il a echange 3 lettres de sa main
+Il a pose le mot wqz
+Il a transforme le mot: spix de la ligne n°1 en spixt
+Il a pose le mot bsp
+Il a passe son tour
+======== Fin du jeu ========
+Le premier joueur a un score de : 16
+Le deuxieme joueur a un score de: 43
+Le deuxieme joueur a gagné

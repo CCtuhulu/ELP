@@ -27,4 +27,4 @@ Quelques fonctionnalités sont proposées a savoir:
 
 2.Mettez vous dans le dossier Elm avec: `cd /Javascript`
 
-3.Executez le projet avec la commande `node interface.js`      
+3.Executez le projet avec la commande `node main.js`      

@@ -1,5 +1,7 @@
 #Jarnac Game
+
 ##Ce qui est proposé
+
 L'objectif de ce projet est de réaliser le jeu Jarnac en mode texte avec Javascript.Le principe de ce jeu est de remplir toutes les cases de son tapis en posant un mot sur chaque ligne et de gagner le maximum de points a la fin du jeu.
 Quelques fonctionnalités sont proposées a savoir:
 -la détection de Jarnac par le joueur adverse
@@ -7,6 +9,7 @@ Quelques fonctionnalités sont proposées a savoir:
 -Transformer un mot déja posé afin de maximiser ses points
 
 ##Configuration
+
 ### Etape 1: Installation de nodeJS et des packages
 1.Suivez ce lien pour installer nodeJS: https://nodejs.org/en/download
 2.Installez ces packages avec ces commandes `npm i prompt-sync

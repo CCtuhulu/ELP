@@ -14,7 +14,9 @@ Quelques fonctionnalités sont proposées a savoir:
 
 ## Configuration
 ### Etape 1: Installation de nodeJS et des packages
-1.Suivez ce lien pour installer nodeJS: https://nodejs.org/en/download 2.Installez ces packages avec ces commandes `
+1.Suivez ce lien pour installer nodeJS: https://nodejs.org/en/download 
+
+2.Installez ces packages avec ces commandes `
 
                                          npm i prompt-sync
 
